@@ -1,8 +1,13 @@
-import helloWorld from "./libs/helloWorld";
-import addImage from "./libs/image";
+import hello from "./libs/helloWorld";
+import image from "./libs/image";
 
-import "./index.css";
+document.getElementById("app").appendChild(hello());
+document.getElementById("app").appendChild(image());
 
-console.log(process.env.NODE_ENV);
-document.getElementById("app").append(helloWorld());
-document.getElementById("app").append(addImage());
+const hi = () => {
+  console.log("hello world");
+};
+
+setTimeout(() => {
+  hi();
+}, 1000);

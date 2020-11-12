@@ -1,7 +1,7 @@
 const helloWorld = () => {
-    const element = document.createElement('div')
-    element.innerHTML = 'Hello Webpack Dev Server'
-    return element;
-}
+  const element = document.createElement("div");
+  element.innerHTML = "IDEAS";
+  return element;
+};
 
-export default helloWorld
+export default helloWorld;

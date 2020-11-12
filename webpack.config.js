@@ -1,5 +1,4 @@
 const path = require("path");
-const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -7,15 +6,18 @@ const { VueLoaderPlugin } = require("vue-loader");
 
 module.exports = (env, argv) => {
   const devMode = argv.mode === "development";
+
   const config = {
     entry: {
       app: "./src/entry.js",
+      // app: "./src/index.js",
     },
     output: {
-      filename: "[name].[contenthash].js",
+      filename: "[name].[contenthash:8].js",
       path: path.resolve(__dirname, "dist"),
       publicPath: "./",
     },
+    target: "browserslist",
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "src"),
@@ -24,7 +26,28 @@ module.exports = (env, argv) => {
     module: {
       rules: [
         {
-          test: /\.css$/i,
+          test: /\.(png|jpg|gif)$/,
+          use: ["file-loader"],
+        },
+        {
+          test: /\.vue$/,
+          use: {
+            loader: "vue-loader",
+          },
+        },
+        {
+          test: /\.m?js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: "babel-loader",
+            options: {
+              exclude: /node_modules/,
+              presets: [["@babel/preset-env"]],
+            },
+          },
+        },
+        {
+          test: /\.css$/,
           use: [
             devMode
               ? "style-loader"
@@ -36,25 +59,6 @@ module.exports = (env, argv) => {
                 },
             "css-loader",
           ],
-        },
-        {
-          test: /\.(png|jpg|gif)$/i,
-          use: ["file-loader"],
-        },
-        {
-          test: /\.vue$/,
-          use: {
-            loader: "vue-loader",
-          },
-        },
-        {
-          test: /\.js?$/,
-          use: {
-            loader: "babel-loader",
-            options: {
-              presets: ["@babel/preset-env"],
-            },
-          },
         },
         {
           test: /\.scss$/,
@@ -93,13 +97,10 @@ module.exports = (env, argv) => {
       },
     },
     plugins: [
-      new webpack.DefinePlugin({
-        "process.env.VIP_DOMAIN": "https://pro.104.com.tw/vip",
-      }),
       new VueLoaderPlugin(),
       new MiniCssExtractPlugin({
-        filename: devMode ? "[name].css" : "[name].[contenthash].css",
-        chunkFilename: devMode ? "[id].css" : "[id].[contenthash].css",
+        filename: devMode ? "[name].css" : "[name].[contenthash:8].css",
+        chunkFilename: devMode ? "[id].css" : "[id].[contenthash:8].css",
       }),
       new HtmlWebpackPlugin({
         title: "My First App",
@@ -111,8 +112,6 @@ module.exports = (env, argv) => {
     devServer: {
       contentBase: path.resolve(__dirname, "dist"),
       port: 8899,
-      hot: true,
-      hotOnly: true,
       historyApiFallback: true,
     },
     ...(devMode ? { devtool: "inline-source-map" } : {}),
